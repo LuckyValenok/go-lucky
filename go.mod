@@ -1,3 +1,3 @@
-module github.com/minehubmc/go-lucky
+module github.com/LuckyValenok/go-lucky
 
 go 1.22.5
