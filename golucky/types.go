@@ -1,30 +1,44 @@
 package golucky
 
+type NodeType string
+
+const (
+	PermissionNode      NodeType = "permission"
+	RegexPermissionNode NodeType = "regex_permission"
+	InheritanceNode     NodeType = "inheritance"
+	PrefixNode          NodeType = "prefix"
+	SuffixNode          NodeType = "suffix"
+	MetaNode            NodeType = "meta"
+	WeightNode          NodeType = "weight"
+	DisplayNameNode     NodeType = "display_name"
+)
+
 type Node struct {
-	Key     string    `json:"key"`
-	Value   bool      `json:"value"`
-	Type    string    `json:"type"` // Enum: [ permission, regex_permission, inheritance, prefix, suffix, meta, weight, display_name ]
-	Expiry  int       `json:"expiry"`
-	Context []Context `json:"context"`
+	Key      string    `json:"key"`
+	Value    bool      `json:"value"`
+	Type     NodeType  `json:"type"`
+	Expiry   int       `json:"expiry"`
+	Contexts []Context `json:"context"`
 }
 
 // NewNode Only Key is required. Note: Value defaults to false
 type NewNode struct {
-	Key     string    `json:"key"`
-	Value   bool      `json:"value"`
-	Expiry  int       `json:"expiry"`
-	Context []Context `json:"context"`
+	Key      string    `json:"key"`
+	Value    bool      `json:"value"`
+	Expiry   int       `json:"expiry"`
+	Contexts []Context `json:"context"`
 }
 
 type Metadata struct {
-	Prefix       string `json:"prefix"`
-	Suffix       string `json:"suffix"`
-	PrimaryGroup string `json:"primaryGroup"`
+	Prefix       string            `json:"prefix"`
+	Suffix       string            `json:"suffix"`
+	PrimaryGroup string            `json:"primaryGroup"`
+	Meta         map[string]string `json:"meta"`
 }
 
 type Context struct {
 	Key   string `json:"key"`
-	Value bool   `json:"value"`
+	Value string `json:"value"`
 }
 
 type QueryFlag string
