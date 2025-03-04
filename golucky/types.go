@@ -27,12 +27,43 @@ type Context struct {
 	Value bool   `json:"value"`
 }
 
-//type PermissionCheckRequest struct { // TODO: do
-//	Permission string `json:"permission"`
-//	Node       Node   `json:"node"`
-//}
+type QueryFlag string
+
+const (
+	ResolveInheritance                        QueryFlag = "resolve_inheritance"
+	IncludeNodesWithoutServerContext          QueryFlag = "include_nodes_without_server_context"
+	IncludeNodesWithoutWorldContext           QueryFlag = "include_nodes_without_world_context"
+	ApplyInheritanceNodesWithoutServerContext QueryFlag = "apply_inheritance_nodes_without_server_context"
+	ApplyInheritanceNodesWithoutWorldContext  QueryFlag = "apply_inheritance_nodes_without_world_context"
+)
+
+type QueryMode string
+
+const (
+	Contextual    QueryMode = "contextual"
+	NonContextual QueryMode = "non_contextual"
+)
+
+type QueryOptions struct {
+	Mode     QueryMode   `json:"mode,omitempty"`
+	Flags    []QueryFlag `json:"flags,omitempty"`
+	Contexts []Context   `json:"contexts,omitempty"`
+}
+
+type PermissionCheckRequest struct {
+	Permission   string       `json:"permission"`
+	QueryOptions QueryOptions `json:"queryOptions,omitempty"`
+}
 
 type PermissionCheckResult struct {
 	Result string `json:"result"` // Tristate: [ true, false, undefined ]
 	Node   Node   `json:"node"`
 }
+
+type NodeMergeStrategy string
+
+const (
+	None                                 NodeMergeStrategy = "none"
+	AddNewDurationToExistingMerge        NodeMergeStrategy = "add_new_duration_to_existing"
+	ReplaceExistingIfDurationLongerMerge NodeMergeStrategy = "replace_existing_if_duration_longer"
+)

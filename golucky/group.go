@@ -38,14 +38,14 @@ func (c *Client) GetGroupNodes(ctx context.Context, groupName string) (*[]Node, 
 	return getRequest[[]Node](ctx, fmt.Sprintf("%s/group/%s/nodes", c.config.RestIp, groupName), c.config.AuthKey)
 }
 
-// AddUserNode Adds a Node to a group, then returns the new array of nodes
-func (c *Client) AddGroupNode(ctx context.Context, groupName string, node NewNode) (*[]Node, error) { // TODO: NodeMergeStrategy
-	return postRequestBody[[]Node](ctx, fmt.Sprintf("%s/group/%s/nodes", c.config.RestIp, groupName), node, c.config.AuthKey)
+// AddGroupNode Adds a Node to a group, then returns the new array of nodes
+func (c *Client) AddGroupNode(ctx context.Context, groupName string, node NewNode, mergeStrategy NodeMergeStrategy) (*[]Node, error) {
+	return postRequestBody[[]Node](ctx, fmt.Sprintf("%s/group/%s/nodes?temporaryNodeMergeStrategy=%s", c.config.RestIp, groupName, mergeStrategy), node, c.config.AuthKey)
 }
 
 // AddGroupNodes Adds multiple Nodes to a group, then returns the new array of nodes
-func (c *Client) AddGroupNodes(ctx context.Context, groupName string, nodes []NewNode) (*[]Node, error) { // TODO: NodeMergeStrategy
-	return patchRequestBody[[]Node](ctx, fmt.Sprintf("%s/group/%s/nodes", c.config.RestIp, groupName), nodes, c.config.AuthKey)
+func (c *Client) AddGroupNodes(ctx context.Context, groupName string, nodes []NewNode, mergeStrategy NodeMergeStrategy) (*[]Node, error) {
+	return patchRequestBody[[]Node](ctx, fmt.Sprintf("%s/group/%s/nodes?temporaryNodeMergeStrategy=%s", c.config.RestIp, groupName, mergeStrategy), nodes, c.config.AuthKey)
 }
 
 // SetGroupNodes Replaces all the Nodes of the group with newNodes
@@ -65,4 +65,8 @@ func (c *Client) ClearGroupNodes(ctx context.Context, groupName string) error {
 
 func (c *Client) GroupHasPermission(ctx context.Context, group string, permission string) (*PermissionCheckResult, error) {
 	return getRequest[PermissionCheckResult](ctx, fmt.Sprintf("%s/group/%s/permission-check?permission=%s", c.config.RestIp, group, permission), c.config.AuthKey)
+}
+
+func (c *Client) GroupHasPermissionWithOptions(ctx context.Context, group string, request PermissionCheckRequest) (*PermissionCheckResult, error) {
+	return postRequestBody[PermissionCheckResult](ctx, fmt.Sprintf("%s/group/%s/permission-check", c.config.RestIp, group), request, c.config.AuthKey)
 }

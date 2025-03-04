@@ -67,13 +67,13 @@ func (c *Client) GetUserNodes(ctx context.Context, uuid string) (*[]Node, error)
 }
 
 // AddUserNode Adds a Node to a user, then returns the new array of nodes
-func (c *Client) AddUserNode(ctx context.Context, uuid string, node NewNode) (*[]Node, error) { // TODO: NodeMergeStrategy
-	return postRequestBody[[]Node](ctx, fmt.Sprintf("%s/user/%s/nodes", c.config.RestIp, uuid), node, c.config.AuthKey)
+func (c *Client) AddUserNode(ctx context.Context, uuid string, node NewNode, mergeStrategy NodeMergeStrategy) (*[]Node, error) {
+	return postRequestBody[[]Node](ctx, fmt.Sprintf("%s/user/%s/nodes?temporaryNodeMergeStrategy=%s", c.config.RestIp, uuid, mergeStrategy), node, c.config.AuthKey)
 }
 
 // AddUserNodes Adds multiple Nodes to a user, then returns the new array of nodes
-func (c *Client) AddUserNodes(ctx context.Context, uuid string, nodes []NewNode) (*[]Node, error) { // TODO: NodeMergeStrategy
-	return patchRequestBody[[]Node](ctx, fmt.Sprintf("%s/user/%s/nodes", c.config.RestIp, uuid), nodes, c.config.AuthKey)
+func (c *Client) AddUserNodes(ctx context.Context, uuid string, nodes []NewNode, mergeStrategy NodeMergeStrategy) (*[]Node, error) {
+	return patchRequestBody[[]Node](ctx, fmt.Sprintf("%s/user/%s/nodes?temporaryNodeMergeStrategy=%s", c.config.RestIp, uuid, mergeStrategy), nodes, c.config.AuthKey)
 }
 
 // SetUserNodes Replaces all the Nodes of the user with newNodes
@@ -93,6 +93,10 @@ func (c *Client) ClearUserNodes(ctx context.Context, uuid string) error {
 
 func (c *Client) UserHasPermission(ctx context.Context, uuid string, permission string) (*PermissionCheckResult, error) {
 	return getRequest[PermissionCheckResult](ctx, fmt.Sprintf("%s/user/%s/permission-check?permission=%s", c.config.RestIp, uuid, permission), c.config.AuthKey)
+}
+
+func (c *Client) UserHasPermissionWithOptions(ctx context.Context, uuid string, request PermissionCheckRequest) (*PermissionCheckResult, error) {
+	return postRequestBody[PermissionCheckResult](ctx, fmt.Sprintf("%s/user/%s/permission-check", c.config.RestIp, uuid), request, c.config.AuthKey)
 }
 
 func (c *Client) Promote(ctx context.Context, uuid string, track string) (*TrackResult, error) {
